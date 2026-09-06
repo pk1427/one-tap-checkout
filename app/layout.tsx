@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
-import { PrivyProvider } from "@privy-io/react-auth";
-import { baseSepolia } from "viem/chains";
+import dynamic from "next/dynamic";
 import "./globals.css";
+
+const ClientOnlyPrivy = dynamic(
+  () =>
+    import("./ClientLayout").then((mod) => {
+      const Component = mod.default;
+      const NamedComponent = (props: { appId: string; children: React.ReactNode }) => (
+        <Component appId={props.appId}>{props.children}</Component>
+      );
+      NamedComponent.displayName = "ClientOnlyPrivy";
+      return NamedComponent;
+    }),
+  { ssr: false }
+);
 
 export const metadata: Metadata = {
   title: "One Tap Checkout - No Gas, No Top-Up",
@@ -15,38 +27,10 @@ export default function RootLayout({
 }>) {
   const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID || "";
 
-  if (!appId) {
-    return (
-      <html lang="en">
-        <body>
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-red-600">Missing NEXT_PUBLIC_PRIVY_APP_ID</div>
-          </div>
-        </body>
-      </html>
-    );
-  }
-
   return (
     <html lang="en">
       <body>
-        <PrivyProvider
-          appId={appId}
-          config={{
-            supportedChains: [baseSepolia],
-            loginMethods: ["email", "google", "wallet"],
-            embeddedWallets: {
-              createOnLogin: "all-users",
-              showWalletUIs: false,
-            },
-            appearance: {
-              theme: "light",
-              accentColor: "#2563eb",
-            },
-          }}
-        >
-          {children}
-        </PrivyProvider>
+        <ClientOnlyPrivy appId={appId}>{children}</ClientOnlyPrivy>
       </body>
     </html>
   );
