@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@farcaster/mini-app-solana": "^1.1.3",
-    "@privy-io/react-auth": "^3.40.0",
-    "next": "14.2.35",
+    "@privy-io/react-auth": "^3.37.0",
+    "next": "^14.2.35",
     "ox": "^0.8.9",
     "permissionless": "^0.2.57",
     "react": "^18",
