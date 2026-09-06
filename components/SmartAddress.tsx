@@ -1,18 +1,18 @@
 'use client';
 
-import { useSmartAddress } from '@/lib/smart-wallet';
-import { truncateAddress } from '@/lib/utils';
+import { usePrivy } from '@/lib/mock-privy';
 
 export default function SmartAddress() {
-  const address = useSmartAddress();
+  const { user } = usePrivy();
+  const address = user?.smartWallet.address;
 
   if (!address) {
-    return <span className="text-gray-500">Not connected</span>;
+    return <span className="text-sm text-gray-500">Not connected</span>;
   }
 
   return (
-    <span className="font-mono text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
-      {truncateAddress(address)}
+    <span className="text-sm font-mono text-gray-900">
+      {address.slice(0, 6)}...{address.slice(-4)}
     </span>
   );
 }

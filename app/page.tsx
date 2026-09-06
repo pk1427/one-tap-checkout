@@ -5,10 +5,14 @@ import ProductCard from '@/components/ProductCard';
 import { useSmartAddress, useSmartWalletClient } from '@/lib/smart-wallet';
 import { PRODUCTS, TOKEN_ADDRESS } from '@/lib/tokens';
 import SmartAddress from '@/components/SmartAddress';
+import { parseTokenAmount, encodeFunctionData } from 'viem';
+import { erc20Abi } from '@/lib/abi';
+import { usePrivy } from '@/lib/mock-privy';
 
 export default function Home() {
   const smartAddress = useSmartAddress();
   const client = useSmartWalletClient();
+  const { ready, authenticated, login } = usePrivy();
   const [lastOrderId, setLastOrderId] = useState<string | null>(null);
   const [purchasing, setPurchasing] = useState(false);
 
@@ -70,6 +74,31 @@ export default function Home() {
       setPurchasing(false);
     }
   }, [client, lastOrderId]);
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Farida&apos;s Shop</h1>
+          <p className="text-gray-600 mb-6">Sign in to start shopping with your smart account.</p>
+          <button
+            onClick={() => login({ loginMethods: ['email'] })}
+            className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            Sign in with Email
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
