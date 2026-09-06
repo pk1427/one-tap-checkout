@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { baseSepolia } from 'viem/chains';
 
@@ -10,7 +11,13 @@ export default function ClientOnlyPrivy({
   appId: string;
   children: React.ReactNode;
 }) {
-  if (!appId) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !appId) {
     return <>{children}</>;
   }
 
